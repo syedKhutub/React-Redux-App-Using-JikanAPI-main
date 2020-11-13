@@ -16,7 +16,7 @@ const SearchField = (props) => {
 
   let count = props.count;
   const fetchProducts = (searchValue , count) => {
-    debugger;
+  
     axios
       .get(
         "https://api.jikan.moe/v3/search/anime?page="+count+"&q=" + searchValue + "&limit=16"
@@ -28,11 +28,11 @@ const SearchField = (props) => {
           // setFetchedDataResults(updatedResult); 
           
           props.onFetchDataSuccess(response.data.results)
-          debugger;
+        
       })
       .catch (error => {
             // setErrorFound(error)
-            debugger;
+          
             props.onFetchDataError(error);
       })
   }
@@ -42,7 +42,7 @@ const SearchField = (props) => {
   
   
   const handleSubmit = (e,value) => {
-      debugger;
+    
       e.preventDefault();
       props.onShowMore()
       setSearchValue(value);
