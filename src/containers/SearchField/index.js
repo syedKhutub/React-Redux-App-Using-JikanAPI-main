@@ -1,63 +1,86 @@
-import React, { useState , useEffect } from 'react'
+import React, { useState } from 'react'
+import {connect} from 'react-redux'
 import Header from '../../components/HeaderUI'
 import axios from 'axios'
+import { fetchDataRequest, fetchDataSuccess, fetchDataError , incrementCount , showMore } from "../../store/actions/action";
 import Body from '../../components/BodyUI'
 
-const SearchField = () => {
+const SearchField = (props) => {
 
   
-  const [count,setCount] = useState(1);
-  const [show, setShow] = useState(false);
-  const [fetchedDataResults,setFetchedDataResults] = useState ([]);
-  const [errorFound, setErrorFound] = useState(null);
-  const [searchValue,setSearchValue] = useState('naruto');
+  // const [count,setCount] = useState(1);
+  // const [show, setShow] = useState(false);
+  // const [fetchedDataResults,setFetchedDataResults] = useState ([]);
+  // const [errorFound, setErrorFound] = useState(null);
+  const [searchValue,setSearchValue] = useState('');
 
-  
+  let count = props.count;
   const fetchProducts = (searchValue , count) => {
+    debugger;
     axios
       .get(
         "https://api.jikan.moe/v3/search/anime?page="+count+"&q=" + searchValue + "&limit=16"
       )
       .then (response => {
-          let x = response.data.results;
-          let updatedResult = fetchedDataResults;
-          updatedResult = [...x,...updatedResult]
-          setFetchedDataResults(updatedResult); 
+          // let x = response.data.results;
+          // let updatedResult = fetchedDataResults;
+          // updatedResult = [...x,...updatedResult]
+          // setFetchedDataResults(updatedResult); 
+          
+          props.onFetchDataSuccess(response.data.results)
+          debugger;
       })
       .catch (error => {
-            setErrorFound(error)
+            // setErrorFound(error)
+            debugger;
+            props.onFetchDataError(error);
       })
   }
 
-  useEffect(() => {
-    fetchProducts(searchValue,count)}
-  ,[]);
+ 
 
   
   
   const handleSubmit = (e,value) => {
+      debugger;
       e.preventDefault();
-      setShow(true);
+      props.onShowMore()
       setSearchValue(value);
     fetchProducts(value,count)
 
   }
 
   const handleShowMore = () => {
-        const updatedCount = count + 1;
-        setCount(updatedCount);
+        props.onCount();
         fetchProducts(searchValue,count);
   }
-console.log(fetchedDataResults)
+
   return (
       <div>
 
       
         <Header submitted={handleSubmit} /> 
         {/* {show && <h1>Requesting:{`https://api.jikan.moe/v3/search/anime?page=${count}&q=$"&limit=16`}</h1>} */}
-        <Body results={fetchedDataResults} clicked={handleShowMore}/>
+        <Body results={props.item} clicked={handleShowMore}/>
     </div>
   )
 }
 
-export default SearchField;
+const mapStateToProps = state => ({
+  item: state.item,
+  loading: state.loading,
+  error: state.error,
+  count: state.count
+})
+
+const mapDispatchToProps = dispatch => {
+  return ({
+      onFetchDataSuccess: (results) => dispatch(fetchDataSuccess(results)),
+      onFetchDataError: (error) => dispatch(fetchDataError(error)),
+      onFetchDataRequest: () => dispatch(fetchDataRequest()),
+      onCount: () => dispatch(incrementCount()),
+      onShowMore: () => dispatch(showMore())
+  })
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(SearchField);
