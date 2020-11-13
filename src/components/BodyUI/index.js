@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
 const CardRow = (props) => {
     const classes = useStyles();
 
-    alert("rendered");
     
     const renderCards = () => {
         
