@@ -13,7 +13,6 @@ import {
   }
   
   export const fetchDataSuccess = (item) => {
-      debugger;
     return {
       type: FETCH_DATA_SUCCESS,
       item
@@ -34,7 +33,6 @@ import {
   }
 
   export const showMore = () => {
-      debugger;
       return {
           type: SHOW_MORE
       }
